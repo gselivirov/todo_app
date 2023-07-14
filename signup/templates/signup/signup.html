@@ -1,18 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Signup</title>
-</head>
-<body>
-    <div>
-        <form action="." method="post">
-            {%csrf_token%}
-            {{form.as_p}}
-            <button>Submit</button>
-        </form>
-    </div>
-</body>
-</html>
+{% extends 'tasks/base.html' %}
+
+{%block title%}TApp | Signup{%endblock%}
+
+{%block content%}
+<div class="w-1/2 p-6 my-6 mx-auto rounded-xl bg-gray-100"> 
+    <h1 class="mb-6 text-3xl">Sign Up</h1>
+
+    <form method="post" action=".">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="inline-block mb-2">Username</label><br>
+            {{ form.username }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="inline-block mb-2">Password</label><br>
+            {{ form.password1 }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="inline-block mb-2">Repeat Password</label><br>
+            {{ form.password2 }}
+        </div>
+        
+        {% if form.errors or form.non_field_errors %}
+        <div class="mb-3 p-6 bg-red-100 rounded-xl">
+            {% for field in form %}
+                
+                {{field.errors}}
+
+            {% endfor %}
+
+                {{form.non_field_errors}}
+        </div>
+        {% endif %}
+
+        <button class="py-4 px-8 mt-3 text-lg bg-emerald-500 hover:bg-emerald-700 rounded-xl text-white">Submit</button>
+    </form>
+</div>
+
+{% endblock content %}
