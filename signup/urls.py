@@ -12,13 +12,12 @@ urlpatterns = [
         "login/",
         auth_views.LoginView.as_view(
             template_name="signup/login.html",
-            next_page="/",
             authentication_form=LoginForm,
         ),
         name="login"
     ),
     path(
         "logout/",
-        auth_views.LogoutView.as_view(next_page="/"),
+        auth_views.LogoutView.as_view(),
     ),
 ]
