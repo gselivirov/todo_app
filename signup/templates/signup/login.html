@@ -1,10 +1,10 @@
 {% extends 'tasks/base.html' %}
 
-{%block title%}TApp | Signup{%endblock%}
+{%block title%}TApp | Login{%endblock%}
 
 {%block content%}
 <div class="w-1/2 p-6 my-6 mx-auto rounded-xl bg-gray-100"> 
-    <h1 class="mb-6 text-3xl">Sign Up</h1>
+    <h1 class="mb-6 text-3xl">Log In</h1>
 
     <form method="post" action=".">
 
@@ -17,12 +17,7 @@
         
         <div class="mb-3">
             <label class="inline-block mb-2">Password</label><br>
-            {{ form.password1 }}
-        </div>
-        
-        <div class="mb-3">
-            <label class="inline-block mb-2">Repeat Password</label><br>
-            {{ form.password2 }}
+            {{ form.password }}
         </div>
         
         {% if form.errors or form.non_field_errors %}
