@@ -10,11 +10,13 @@
     Search bar goes here
     </div>
 
-    {% for task in tasks %}
-    <div>
-        {{task}}  |  {{task.due_date}}
-    </div>
-    {% endfor %}
+    <ul>
+        {% for task in tasks %}
+        <li>
+            <a href="{% url 'tasks:detail' task.pk %}">{{task}}</a>
+        </li>
+        {% endfor %}
+    </ul>
 
     <div> 
         <h1 class="mb-6 text-3xl">Add task</h1>

@@ -1,0 +1,12 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+<div class="p-6 w-1/2 mx-auto bg-gray-100 rounded-xl">
+    <h1 class="text-xl font-bold">{{task.title}}</h1><br>
+    <p class="text-lg font-semibold">{{task.text}}</p><br>
+    <p class="text-lg font-semibold">Due date: {{task.due_date}}</p>
+    <p class="text-lg font-semibold">Status: {{task.status}}</p>
+
+    <a href="{% url 'tasks:edit' task.pk%}">edit</a>
+</div>
+{% endblock content %}

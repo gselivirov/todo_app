@@ -27,5 +27,36 @@ class TaskListView(View):
             new_task = form.save(commit=False)
             new_task.user = user
             new_task.save()
-            redirect("/")
+            return redirect("/")
         return render(request, self.template_name, {"tasks": tasks, "form": form})
+
+
+class TaskDetailView(View):
+    model_class = Task
+    form_class = TaskForm
+    template_name = "tasks/detail.html"
+
+    def get(self, request, pk, *args, **kwargs):
+        task = self.model_class.objects.get(pk=pk)
+        return render(request, self.template_name, {"task": task})
+
+
+class TaskEditView(View):
+    model_class = Task
+    form_class = TaskForm
+    template_name = "tasks/edit.html"
+
+    def get(self, request, pk, *args, **kwargs):
+        task = self.model_class.objects.get(pk=pk)
+        form = self.form_class(instance=task)
+        return render(request, self.template_name, {"form": form})
+
+
+    def post(self, request, pk):
+        task = self.model_class.objects.get(pk=pk)
+        form = self.form_class(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect("tasks:detail", pk)
+        return render(request, self.template_name, {"form": form})
+
