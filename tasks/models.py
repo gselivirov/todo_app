@@ -10,3 +10,6 @@ class Task(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     due_date = models.DateTimeField(blank=True, null=True)
     # status = models.CharField()
+
+    def __str__(self):
+        return str(self.title)

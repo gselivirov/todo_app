@@ -1,0 +1,54 @@
+{% extends 'tasks/base.html' %}
+
+{%block title%}TApp{%endblock%}
+
+
+{%block content%}
+<div class="p-6 w-1/2 mx-auto bg-gray-100 rounded-xl">
+
+    <div class="p-6 bg-emerald-100 rounded-xl">
+    Search bar goes here
+    </div>
+
+    {% for task in tasks %}
+    <div>
+        {{task}}  |  {{task.due_date}}
+    </div>
+    {% endfor %}
+
+    <div> 
+        <h1 class="mb-6 text-3xl">Add task</h1>
+    
+        <form method="post" action=".">
+    
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="inline-block mb-2">Task</label><br>
+                {{ form.title }}
+            </div>
+            
+            <div class="mb-3">
+                <label class="inline-block mb-2">Description</label><br>
+                {{ form.text }}
+            </div>
+            
+            <div class="mb-3">
+                <label class="inline-block mb-2">Due date</label><br>
+                {{ form.due_date }}
+            </div>
+            
+            {% if form.errors or form.non_field_errors %}
+            <div class="mb-3 p-6 bg-red-100 rounded-xl">
+                {% for field in form %}
+                    {{field.errors}}
+                {% endfor %}
+                    {{form.non_field_errors}}
+            </div>
+            {% endif %}
+    
+            <button class="py-4 px-8 mt-3 text-lg bg-emerald-500 hover:bg-emerald-700 rounded-xl text-white">Add</button>
+        </form>
+
+</div>
+{%endblock%}
