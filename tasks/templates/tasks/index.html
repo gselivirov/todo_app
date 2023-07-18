@@ -13,7 +13,7 @@
     <ul>
         {% for task in tasks %}
         <li>
-            <a href="{% url 'tasks:detail' task.pk %}">{{task}}</a>
+            <a href="{% url 'tasks:detail' task.pk %}">{{task}}</a> | <a href="{% url 'tasks:delete' task.pk %} " class="text-red-600">Delete</a>
         </li>
         {% endfor %}
     </ul>

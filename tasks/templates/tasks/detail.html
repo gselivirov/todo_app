@@ -7,6 +7,6 @@
     <p class="text-lg font-semibold">Due date: {{task.due_date}}</p>
     <p class="text-lg font-semibold">Status: {{task.status}}</p>
 
-    <a href="{% url 'tasks:edit' task.pk%}">edit</a>
+    <a href="{% url 'tasks:edit' task.pk%}">Edit</a>  <a href="{% url 'tasks:delete' task.pk %}" class="text-red-600">Delete</a>
 </div>
 {% endblock content %}
