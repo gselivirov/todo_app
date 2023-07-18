@@ -1,24 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+# from django.utils.decorators import method_decorator
+# from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Task
 from .forms import TaskForm
 
 
-class TaskListView(View):
+class TaskListView(LoginRequiredMixin, View):
     model_class = Task
     form_class = TaskForm
     template_name = "tasks/index.html"
 
-    @method_decorator(login_required)
+
     def get(self, request, *args, **kwargs):
         tasks = request.user.tasks.all()
         form = self.form_class()
         return render(request, self.template_name, {"tasks": tasks, "form": form})
 
-    @method_decorator(login_required)
+
     def post(self, request, *args, **kwargs):
         user = request.user
         tasks = user.tasks.all()
@@ -31,13 +33,15 @@ class TaskListView(View):
         return render(request, self.template_name, {"tasks": tasks, "form": form})
 
 
-class TaskDetailView(View):
+class TaskDetailView(LoginRequiredMixin, View):
     model_class = Task
     form_class = TaskForm
     template_name = "tasks/detail.html"
 
     def get(self, request, pk, *args, **kwargs):
         task = self.model_class.objects.get(pk=pk)
+        if request.user != task.user:
+            return redirect("/")
         return render(request, self.template_name, {"task": task})
 
 
@@ -48,12 +52,16 @@ class TaskEditView(View):
 
     def get(self, request, pk, *args, **kwargs):
         task = self.model_class.objects.get(pk=pk)
+        if request.user != task.user:
+            return redirect("/")
         form = self.form_class(instance=task)
         return render(request, self.template_name, {"form": form})
 
 
     def post(self, request, pk):
         task = self.model_class.objects.get(pk=pk)
+        if request.user != task.user:
+            return redirect("/")
         form = self.form_class(request.POST, instance=task)
         if form.is_valid():
             form.save()
@@ -62,5 +70,7 @@ class TaskEditView(View):
 
 def delete_task(request, pk):
     task = get_object_or_404(Task, pk=pk)
+    if request.user != task.user:
+        return redirect("/")
     task.delete()
     return redirect("/")
