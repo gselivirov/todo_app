@@ -28,8 +28,10 @@
                 {{form.non_field_errors}}
         </div>
         {% endif %}
-
-        <button class="py-4 px-8 mt-3 text-lg bg-emerald-500 hover:bg-emerald-700 rounded-xl text-white">Submit</button>
+        <div class="flex flex-row items-center justify-between mt-6">
+            <button class="inline-block py-4 px-8 text-lg bg-emerald-500 hover:bg-emerald-700 rounded-xl text-white">Submit</button>
+            <a href="{% url 'signup:signup' %}" class="p-3 mr-9 text-lg hover:text-emerald-500">Don't have an account yet?</a> 
+        </div>
     </form>
 </div>
 
