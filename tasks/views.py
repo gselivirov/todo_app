@@ -1,8 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-# from django.utils.decorators import method_decorator
-# from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Task
@@ -14,12 +11,10 @@ class TaskListView(LoginRequiredMixin, View):
     form_class = TaskForm
     template_name = "tasks/index.html"
 
-
     def get(self, request, *args, **kwargs):
         tasks = request.user.tasks.all()
         form = self.form_class()
         return render(request, self.template_name, {"tasks": tasks, "form": form})
-
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -39,27 +34,26 @@ class TaskDetailView(LoginRequiredMixin, View):
     template_name = "tasks/detail.html"
 
     def get(self, request, pk, *args, **kwargs):
-        task = self.model_class.objects.get(pk=pk)
+        task = get_object_or_404(self.model_class, pk=pk)
         if request.user != task.user:
             return redirect("/")
         return render(request, self.template_name, {"task": task})
 
 
-class TaskEditView(View):
+class TaskEditView(LoginRequiredMixin, View):
     model_class = Task
     form_class = TaskForm
     template_name = "tasks/edit.html"
 
     def get(self, request, pk, *args, **kwargs):
-        task = self.model_class.objects.get(pk=pk)
+        task = get_object_or_404(self.model_class, pk=pk)
         if request.user != task.user:
             return redirect("/")
         form = self.form_class(instance=task)
         return render(request, self.template_name, {"form": form})
 
-
     def post(self, request, pk):
-        task = self.model_class.objects.get(pk=pk)
+        task = get_object_or_404(self.model_class, pk=pk)
         if request.user != task.user:
             return redirect("/")
         form = self.form_class(request.POST, instance=task)
@@ -67,6 +61,7 @@ class TaskEditView(View):
             form.save()
             return redirect("tasks:detail", pk)
         return render(request, self.template_name, {"form": form})
+
 
 def delete_task(request, pk):
     task = get_object_or_404(Task, pk=pk)

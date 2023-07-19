@@ -3,7 +3,6 @@ from django.views import View
 from .forms import SignupForm
 
 
-
 class SignupView(View):
     form_class = SignupForm
     template_name = "signup/signup.html"
