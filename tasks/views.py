@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from .models import Task
 from .forms import TaskForm
@@ -13,8 +14,29 @@ class TaskListView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         tasks = request.user.tasks.all()
+        query = request.GET.get("query", "")
+        filters = tasks.values("status").distinct()
+        status = request.GET.get("status", "")
+
         form = self.form_class()
-        return render(request, self.template_name, {"tasks": tasks, "form": form})
+
+        if query:
+            tasks = tasks.filter(Q(title__icontains=query) | Q(text__icontains=query))
+
+        if status:
+            tasks = tasks.filter(status=status)
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "tasks": tasks,
+                "form": form,
+                "query": query,
+                "filters": filters,
+                "status": status,
+            },
+        )
 
     def post(self, request, *args, **kwargs):
         user = request.user

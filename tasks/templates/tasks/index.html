@@ -4,59 +4,80 @@
 
 
 {%block content%}
-<div class="p-6 w-3/4 mx-auto bg-gray-100 rounded-xl">
+<div class="grid grid-cols-5 gap-3">
 
-    <div class="p-6 bg-emerald-100 rounded-xl">
-    Search bar goes here
-    </div>
+    <div class="col-span-1 rounded-xl">
 
-    <h1 class="mb-6 text-2xl font-bold">Tasks</h1>
-    <ul>
-        {% for task in tasks %}
-        <li class="mb-4 p-2 bg-white rounded-xl">
-            <a class="text-lg hover:text-emerald-800" href="{% url 'tasks:detail' task.pk %}">{{task}} | {{task.due_date}} | {{task.status}} | {{task.created_at}}</a> | <a href="{% url 'tasks:delete' task.pk %} " class="text-red-600">Delete</a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <div> 
-        <h2 class="mb-6 mt-6 text-lg font-semibold">Add task</h2>
-    
-        <form method="post" action=".">
-    
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label class="inline-block mb-2">Task</label><br>
-                {{ form.title }}
+        <form action="{% url 'tasks:tasks' %}" method="get">
+            <div class="mb-2 border-2 rounded-xl w-full flex flex-row justify-between items-center">
+                <input name="query" type="text" class="p-3 h-full w-4/5 rounded-l-xl" value="{{query}}" placeholder="">
+                <button class="w-fit h-fit text-gray-400 px-3">Search</button>
             </div>
-            
-            <div class="mb-3">
-                <label class="inline-block mb-2">Description</label><br>
-                {{ form.text }}
-            </div>
-            
-            <div class="mb-3">
-                <label class="inline-block mb-2">Due date</label><br>
-                {{ form.due_date }}
-            </div>
-            
-            <div class="mb-3">
-                <label class="inline-block mb-2">Status</label><br>
-                {{ form.status }}
-            </div>
-            
-            {% if form.errors or form.non_field_errors %}
-            <div class="mb-3 p-6 bg-red-100 rounded-xl">
-                {% for field in form %}
-                    {{field.errors}}
-                {% endfor %}
-                    {{form.non_field_errors}}
-            </div>
-            {% endif %}
-    
-            <button class="py-2 px-3 mt-3 text-lg bg-emerald-500 hover:bg-emerald-700 rounded-xl text-white">Add</button>
         </form>
 
+        <p class="text-lg font-semibold">Filter by Status</p>
+        <ul>
+            {% for filter in filters %}
+            <li class="my-3 text-lg rounded-xl {% if filter.status == status %}bg-gray-200{% endif %}">
+
+                <a href="{% url 'tasks:tasks' %}?query={{query}}&status={{filter.status}}" class="">
+                {{filter.status}}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'tasks:tasks' %}" class="px-4 py-2 mt-6 rounded-xl bg-emerald-700 text-lg font-semibold text-white">Clear</a>
+    </div>
+    <div class="p-6 col-span-4 bg-gray-100 rounded-xl">
+        <h1 class="mb-6 text-2xl font-bold">Tasks</h1>
+        <ul>
+            {% for task in tasks %}
+            <li class="mb-4 p-2 bg-white rounded-xl">
+                <a class="text-lg hover:text-emerald-800" href="{% url 'tasks:detail' task.pk %}">{{task}} | {{task.due_date}} | {{task.status}} | {{task.created_at}}</a> | <a href="{% url 'tasks:delete' task.pk %} " class="text-red-600">Delete</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <div> 
+            <h2 class="mb-6 mt-6 text-lg font-semibold">Add task</h2>
+        
+            <form method="post" action=".">
+        
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="inline-block mb-2">Task</label><br>
+                    {{ form.title }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="inline-block mb-2">Description</label><br>
+                    {{ form.text }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="inline-block mb-2">Due date</label><br>
+                    {{ form.due_date }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="inline-block mb-2">Status</label><br>
+                    {{ form.status }}
+                </div>
+                
+                {% if form.errors or form.non_field_errors %}
+                <div class="mb-3 p-6 bg-red-100 rounded-xl">
+                    {% for field in form %}
+                        {{field.errors}}
+                    {% endfor %}
+                        {{form.non_field_errors}}
+                </div>
+                {% endif %}
+        
+                <button class="py-2 px-3 mt-3 text-lg bg-emerald-500 hover:bg-emerald-700 rounded-xl text-white">Add</button>
+            </form>
+
+    </div>
 </div>
 {%endblock%}
