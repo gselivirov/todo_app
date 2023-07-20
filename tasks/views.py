@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import Task
 from .forms import TaskForm
@@ -13,9 +15,11 @@ class TaskListView(LoginRequiredMixin, View):
     template_name = "tasks/index.html"
 
     def get(self, request, *args, **kwargs):
-        tasks = request.user.tasks.all()
+        tasks = request.user.tasks.order_by("due_date")
+        
+
         query = request.GET.get("query", "")
-        filters = tasks.values("status").distinct()
+        filters = Task.STATUS_CHOICES
         status = request.GET.get("status", "")
 
         form = self.form_class()
@@ -26,15 +30,25 @@ class TaskListView(LoginRequiredMixin, View):
         if status:
             tasks = tasks.filter(status=status)
 
+        overdue_tasks = tasks.filter(due_date__lte=timezone.now() - timedelta(days=1))
+        today_tasks = tasks.filter(due_date__date=timezone.now())
+        tomorrow_tasks = tasks.filter(due_date__date=timezone.now() + timedelta(days=1))
+        week_tasks = tasks.filter(Q(due_date__gt=timezone.now() + timedelta(days=1)) & Q(due_date__lte=timezone.now()+timedelta(days=7)))
+        other_tasks = tasks.filter(due_date__gt=timezone.now()+timedelta(days=7))
+
         return render(
             request,
             self.template_name,
             {
-                "tasks": tasks,
+                "tasks": other_tasks,
                 "form": form,
                 "query": query,
                 "filters": filters,
                 "status": status,
+                "overdue_tasks": overdue_tasks,
+                "tomorrow_tasks": tomorrow_tasks,
+                "week_tasks": week_tasks,
+                "today_tasks": today_tasks,
             },
         )
 
