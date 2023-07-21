@@ -15,13 +15,11 @@ class TaskListView(LoginRequiredMixin, View):
     template_name = "tasks/index.html"
 
     def get(self, request, *args, **kwargs):
-        tasks = request.user.tasks.order_by("due_date")
-        
+        tasks = request.user.tasks.all()
 
         query = request.GET.get("query", "")
         filters = Task.STATUS_CHOICES
         status = request.GET.get("status", "")
-
 
         if query:
             tasks = tasks.filter(Q(title__icontains=query) | Q(text__icontains=query))
@@ -32,8 +30,11 @@ class TaskListView(LoginRequiredMixin, View):
         overdue_tasks = tasks.filter(due_date__lte=timezone.now() - timedelta(days=1))
         today_tasks = tasks.filter(due_date__date=timezone.now())
         tomorrow_tasks = tasks.filter(due_date__date=timezone.now() + timedelta(days=1))
-        week_tasks = tasks.filter(Q(due_date__gt=timezone.now() + timedelta(days=1)) & Q(due_date__lte=timezone.now()+timedelta(days=7)))
-        other_tasks = tasks.filter(due_date__gt=timezone.now()+timedelta(days=7))
+        week_tasks = tasks.filter(
+            Q(due_date__gt=timezone.now() + timedelta(days=1))
+            & Q(due_date__lte=timezone.now() + timedelta(days=7))
+        )
+        other_tasks = tasks.filter(due_date__gt=timezone.now() + timedelta(days=7))
 
         return render(
             request,
@@ -71,7 +72,7 @@ class NewTaskView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():

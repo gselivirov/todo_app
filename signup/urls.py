@@ -13,6 +13,7 @@ urlpatterns = [
         auth_views.LoginView.as_view(
             template_name="signup/login.html",
             authentication_form=LoginForm,
+            redirect_authenticated_user=True,
         ),
         name="login",
     ),

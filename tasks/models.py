@@ -4,6 +4,9 @@ from django.db import models
 
 
 class Task(models.Model):
+    class Meta:
+        ordering = ["due_date"]
+
     LOW_PRIORITY = "low_priority"
     HIGH_PRIORITY = "high_priority"
     STATUS_CHOICES = [
