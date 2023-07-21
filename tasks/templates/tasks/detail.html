@@ -3,10 +3,15 @@
 {% block content %}
 <div class="p-6 w-1/2 mx-auto bg-gray-100 rounded-xl">
     <h1 class="text-xl font-bold">{{task.title}}</h1><br>
-    <p class="text-lg font-semibold">{{task.text}}</p><br>
-    <p class="text-lg font-semibold">Due date: {{task.due_date}}</p>
-    <p class="text-lg font-semibold">Status: {{task.status}}</p>
+    <div class="mb-6">
+        <p class="text-lg">{{task.text}}</p><br>
+        <p class="text-lg"><span class="font-semibold">Due date:</span> {{task.due_date}}</p>
+        <p class="text-lg"><span class="font-semibold">Status:</span> {{task.get_status_display}}</p>
+    </div>
 
-    <a href="{% url 'tasks:edit' task.pk%}">Edit</a>  <a href="{% url 'tasks:delete' task.pk %}" class="text-red-600">Delete</a>
+    <div> 
+        <a href="{% url 'tasks:edit' task.pk%}" class="p-3 mr-3 bg-gray-200 hover:bg-gray-300 rounded-xl text-lg font-semibold">Edit</a>  
+        <a href="{% url 'tasks:delete' task.pk %}" class="p-3 text-red-500 bg-gray-200 hover:bg-gray-300 rounded-xl text-lg font-semibold">Delete</a>
+    </div>
 </div>
 {% endblock content %}

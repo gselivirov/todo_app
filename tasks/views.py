@@ -22,7 +22,6 @@ class TaskListView(LoginRequiredMixin, View):
         filters = Task.STATUS_CHOICES
         status = request.GET.get("status", "")
 
-        form = self.form_class()
 
         if query:
             tasks = tasks.filter(Q(title__icontains=query) | Q(text__icontains=query))
@@ -41,7 +40,6 @@ class TaskListView(LoginRequiredMixin, View):
             self.template_name,
             {
                 "tasks": other_tasks,
-                "form": form,
                 "query": query,
                 "filters": filters,
                 "status": status,
@@ -51,17 +49,6 @@ class TaskListView(LoginRequiredMixin, View):
                 "today_tasks": today_tasks,
             },
         )
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        tasks = user.tasks.all()
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            new_task = form.save(commit=False)
-            new_task.user = user
-            new_task.save()
-            return redirect("/")
-        return render(request, self.template_name, {"tasks": tasks, "form": form})
 
 
 class TaskDetailView(LoginRequiredMixin, View):
@@ -74,6 +61,25 @@ class TaskDetailView(LoginRequiredMixin, View):
         if request.user != task.user:
             return redirect("/")
         return render(request, self.template_name, {"task": task})
+
+
+class NewTaskView(LoginRequiredMixin, View):
+    model_class = Task
+    form_class = TaskForm
+    template_name = "tasks/new.html"
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            new_task = form.save(commit=False)
+            new_task.user = request.user
+            new_task.save()
+            return redirect("/")
+        return render(request, self.template_name, {"form": form})
 
 
 class TaskEditView(LoginRequiredMixin, View):

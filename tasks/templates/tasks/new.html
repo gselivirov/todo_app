@@ -1,0 +1,45 @@
+{% extends 'tasks/base.html' %}
+
+{%block title%}New task{%endblock%}
+
+{% block content %}
+<div class="p-6 w-1/2 mx-auto bg-gray-100 rounded-xl">
+    <h2 class="mb-6 mt-6 text-lg font-semibold">Add task</h2>
+
+    <form method="post" action=".">
+
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="inline-block mb-2">Task</label><br>
+            {{ form.title }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="inline-block mb-2">Description</label><br>
+            {{ form.text }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="inline-block mb-2">Due date</label><br>
+            {{ form.due_date }}
+        </div>
+        
+        <div class="mb-3">
+            <label class="inline-block mb-2">Status</label><br>
+            {{ form.status }}
+        </div>
+        
+        {% if form.errors or form.non_field_errors %}
+        <div class="mb-3 p-6 bg-red-100 rounded-xl">
+            {% for field in form %}
+                {{field.errors}}
+            {% endfor %}
+                {{form.non_field_errors}}
+        </div>
+        {% endif %}
+
+        <button class="py-2 px-3 mt-3 text-lg bg-emerald-700 hover:bg-emerald-900 rounded-xl text-white">Add</button>
+    </form>
+</div>
+{% endblock content %}
